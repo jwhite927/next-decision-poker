@@ -39,12 +39,12 @@ export default async function DecisionPage({
                     <h1 className="text-2xl font-semibold">
                         {decision.prompt}
                     </h1>
-                    <div className="flex flex-col gap-2 border border-zinc-300 rounded px-4 py-2">
+                    <div className="flex flex-col gap-1 border border-zinc-300 rounded font-bold px-4 py-3">
                         Share this URL to invite others:
                         <div className="flex gap-2 items-center">
                         <a
                             href={shareUrl}
-                            className="font-mono text-xs break-all underline"
+                            className="font-mono text-xs font-normal break-all underline"
                         >
                             {shareUrl}
                         </a>
