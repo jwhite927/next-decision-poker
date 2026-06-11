@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { saveDecision } from "@/lib/decisions";
+import { saveDecision } from '@/lib/decisions';
 
 export default function Home() {
     async function createDecision(formData: FormData) {
@@ -27,22 +27,23 @@ export default function Home() {
                         />
                     </label>
                     <label className="flex flex-col gap-1">
-                        <span className="text-sm text-zinc-500">What are we deciding?</span>
+                        <span className="text-sm text-zinc-500">
+                            What are we deciding?
+                        </span>
                         <textarea
                             name="prompt"
                             required
                             rows={3}
-                            placeholder="e.g. Whare should we go for the team offsite?"
+                            placeholder="e.g. Where should we go for the team offsite?"
                             className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
                         />
                     </label>
                     <button
-                      type="submit"
-                      className="rounded bg-zinc-900 px-4 py-2 text-white dark:bg-white dark:text-black"
-                      >
-                      Create Decision
+                        type="submit"
+                        className="rounded bg-zinc-900 px-4 py-2 text-white dark:bg-white dark:text-black"
+                    >
+                        Create Decision
                     </button>
-
                 </form>
             </main>
         </div>
