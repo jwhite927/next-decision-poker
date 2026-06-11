@@ -9,9 +9,10 @@ export type Decision = {
     round: number;
 };
 
-export async function saveDecision(
-    input: Omit<Decision, 'id'>,
-): Promise<Decision> {
+export async function saveDecision(input: {
+    creator: string;
+    prompt: string;
+}): Promise<Decision> {
     const id = crypto.randomUUID();
     const { error } = await supabaseAdmin.from('decisions').insert({
         id,
@@ -23,7 +24,8 @@ export async function saveDecision(
         throw new Error(`Failed to save decision: ${error.message}`);
     }
 
-    return { id, ...input };
+    // revealed/round fall back to their DB defaults (false / 1).
+    return { id, ...input, revealed: false, round: 1 };
 }
 
 export type Opinion = {
@@ -92,3 +94,66 @@ export async function startNextRound(
         .eq('id', id);
     if (error) throw new Error(`Failed to start next round: ${error.message}`);
 }
+
+export type RecentDecision = {
+    id: string;
+    prompt: string;
+    round: number;
+    revealed: boolean;
+    lastSeen: string;
+};
+
+// Records (or refreshes) the link between a device and a decision. Called when a
+// device creates or visits a decision; the upsert bumps last_seen on revisits.
+export async function recordDeviceDecision(
+    deviceId: string,
+    decisionId: string,
+): Promise<void> {
+    const { error } = await supabaseAdmin.from('device_decisions').upsert(
+        {
+            device_id: deviceId,
+            decision_id: decisionId,
+            last_seen: new Date().toISOString(),
+        },
+        { onConflict: 'device_id,decision_id' },
+    );
+
+    if (error) {
+        throw new Error(`Failed to record device decision: ${error.message}`);
+    }
+}
+
+export async function getRecentDecisions(
+    deviceId: string,
+    limit = 10,
+): Promise<RecentDecision[]> {
+    const { data, error } = await supabaseAdmin
+        .from('device_decisions')
+        .select('last_seen, decisions(id, prompt, round, revealed)')
+        .eq('device_id', deviceId)
+        .order('last_seen', { ascending: false })
+        .limit(limit);
+
+    if (error) {
+        throw new Error(`Failed to load recent decisions: ${error.message}`);
+    }
+
+    // supabase-js types the embedded relation loosely without generated types.
+    return ((data ?? []) as unknown as RecentRow[]).map((row) => ({
+        id: row.decisions.id,
+        prompt: row.decisions.prompt,
+        round: row.decisions.round,
+        revealed: row.decisions.revealed,
+        lastSeen: row.last_seen,
+    }));
+}
+
+type RecentRow = {
+    last_seen: string;
+    decisions: {
+        id: string;
+        prompt: string;
+        round: number;
+        revealed: boolean;
+    };
+};

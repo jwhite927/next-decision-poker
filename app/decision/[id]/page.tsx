@@ -7,7 +7,9 @@ import {
     saveOpinion,
     revealDecision,
     startNextRound,
+    recordDeviceDecision,
 } from '@/lib/decisions';
+import { getDeviceId } from '@/lib/device';
 import { CopyLinkButton } from './CopyLinkButton';
 
 export default async function DecisionPage({
@@ -19,6 +21,9 @@ export default async function DecisionPage({
     const decision = await getDecision(id);
 
     if (!decision) notFound();
+
+    const deviceId = await getDeviceId();
+    if (deviceId) await recordDeviceDecision(deviceId, id);
 
     const opinions = await getOpinions(id, decision.round);
     const h = await headers();

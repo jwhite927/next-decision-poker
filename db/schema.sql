@@ -15,3 +15,12 @@ create table public.opinions (
   created_at   timestamptz not null default now(),
   round        int not null default 1
 )
+
+create table public.device_decisions (
+    device_id   uuid not null,
+    decision_id uuid not null references public.decisions (id) on delete cascade,
+    last_seen   timestamptz not null default now(),
+    primary key (device_id, decision_id)
+);
+
+create index device_decisions_recent_idx on public.device_decisions (device_id, last_seen desc);
