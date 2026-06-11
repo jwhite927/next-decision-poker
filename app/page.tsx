@@ -107,7 +107,11 @@ export default async function Home() {
                         <p className="text-sm text-zinc-500">
                             Want this device to remember the decisions you create
                             and open? We&apos;ll store a random id in a cookie —
-                            no account, no tracking.
+                            no account, no tracking. See our{' '}
+                            <Link href="/privacy" className="underline">
+                                privacy note
+                            </Link>
+                            .
                         </p>
                         <form action={enableDeviceMemory}>
                             <button
@@ -119,6 +123,11 @@ export default async function Home() {
                         </form>
                     </section>
                 )}
+                <footer className="w-full pt-4 text-xs text-zinc-400">
+                    <Link href="/privacy" className="underline">
+                        Privacy
+                    </Link>
+                </footer>
             </main>
         </div>
     );
