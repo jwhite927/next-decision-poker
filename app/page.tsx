@@ -6,9 +6,11 @@ import {
     getRecentDecisions,
 } from '@/lib/decisions';
 import { getDeviceId } from '@/lib/device';
+import { enableDeviceMemory, disableDeviceMemory } from './actions';
 
 export default async function Home() {
     const deviceId = await getDeviceId();
+    const consented = Boolean(deviceId);
     const recent = deviceId ? await getRecentDecisions(deviceId) : [];
 
     async function createDecision(formData: FormData) {
@@ -58,30 +60,63 @@ export default async function Home() {
                         Create Decision
                     </button>
                 </form>
-                {recent.length > 0 && (
+                {consented ? (
                     <section className="flex w-full flex-col gap-2">
-                        <h2 className="text-sm font-semibold text-zinc-500">
-                            Recent decisions
-                        </h2>
-                        <ul className="flex flex-col gap-1">
-                            {recent.map((d) => (
-                                <li key={d.id}>
-                                    <Link
-                                        href={`/decision/${d.id}`}
-                                        className="flex items-center justify-between gap-3 rounded border border-zinc-200 px-3 py-2 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
-                                    >
-                                        <span className="truncate">
-                                            {d.prompt}
-                                        </span>
-                                        <span className="shrink-0 text-xs text-zinc-500">
-                                            {d.revealed
-                                                ? `Round ${d.round} · revealed`
-                                                : `Round ${d.round}`}
-                                        </span>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-sm font-semibold text-zinc-500">
+                                Recent decisions
+                            </h2>
+                            <form action={disableDeviceMemory}>
+                                <button
+                                    type="submit"
+                                    className="text-xs text-zinc-500 underline"
+                                >
+                                    Forget on this device
+                                </button>
+                            </form>
+                        </div>
+                        {recent.length > 0 ? (
+                            <ul className="flex flex-col gap-1">
+                                {recent.map((d) => (
+                                    <li key={d.id}>
+                                        <Link
+                                            href={`/decision/${d.id}`}
+                                            className="flex items-center justify-between gap-3 rounded border border-zinc-200 px-3 py-2 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+                                        >
+                                            <span className="truncate">
+                                                {d.prompt}
+                                            </span>
+                                            <span className="shrink-0 text-xs text-zinc-500">
+                                                {d.revealed
+                                                    ? `Round ${d.round} · revealed`
+                                                    : `Round ${d.round}`}
+                                            </span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-zinc-500">
+                                No decisions yet — the ones you create or open
+                                will show up here.
+                            </p>
+                        )}
+                    </section>
+                ) : (
+                    <section className="flex w-full flex-col gap-2 rounded border border-zinc-200 px-4 py-3 dark:border-zinc-800">
+                        <p className="text-sm text-zinc-500">
+                            Want this device to remember the decisions you create
+                            and open? We&apos;ll store a random id in a cookie —
+                            no account, no tracking.
+                        </p>
+                        <form action={enableDeviceMemory}>
+                            <button
+                                type="submit"
+                                className="rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
+                            >
+                                Remember my decisions
+                            </button>
+                        </form>
                     </section>
                 )}
             </main>

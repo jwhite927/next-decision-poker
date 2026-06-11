@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
@@ -60,6 +61,7 @@ export default async function DecisionPage({
     return (
         <div className="flex flex-col flex-1 items-center bg-zinc-50 font-sans dark:bg-black">
             <main className="flex w-full max-w-3xl flex-col gap-8 py-24 px-16">
+                <Link href="/" className="text-sm text-zinc-800 dark:text-zinc-300">{"<- Home"}</Link>
                 <header className="flex flex-col gap-1">
                     <span className="text-sm text-zinc-500">
                         Started by {decision.creator} · Round {decision.round}

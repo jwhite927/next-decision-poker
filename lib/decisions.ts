@@ -123,6 +123,19 @@ export async function recordDeviceDecision(
     }
 }
 
+// Deletes every device→decision link for a device. Used when the user revokes
+// consent ("forget my decisions on this device").
+export async function forgetDevice(deviceId: string): Promise<void> {
+    const { error } = await supabaseAdmin
+        .from('device_decisions')
+        .delete()
+        .eq('device_id', deviceId);
+
+    if (error) {
+        throw new Error(`Failed to forget device: ${error.message}`);
+    }
+}
+
 export async function getRecentDecisions(
     deviceId: string,
     limit = 10,
