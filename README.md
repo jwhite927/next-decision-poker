@@ -14,6 +14,7 @@ A multiplayer decision-making app. One person poses a question, shares a link, a
 - [Next.js 16](https://nextjs.org) (App Router)
 - [React 19](https://react.dev)
 - [Tailwind CSS 4](https://tailwindcss.com)
+- [Supabase](https://supabase.com) (Postgres)
 - TypeScript
 
 ## Development
@@ -23,3 +24,7 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+## Colophon
+
+This project was built collaboratively with [Claude Code](https://claude.com/claude-code).
